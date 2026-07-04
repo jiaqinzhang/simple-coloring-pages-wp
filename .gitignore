@@ -1,2 +1,5 @@
 node_modules/
 *.log
+docker-compose.prod.yml
+docker-compose.yml
+setup.sh
