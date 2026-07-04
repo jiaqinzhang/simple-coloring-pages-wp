@@ -1,0 +1,101 @@
+<?php
+/**
+ * Seeds demo coloring_topic posts from the real generated test images so the
+ * theme can be previewed with realistic content before the production
+ * image-generation pipeline hands off real data (see PROJECT_HANDOFF.md).
+ *
+ * Safe to run multiple times — it no-ops if demo content already exists.
+ */
+if ( ! defined( 'ABSPATH' ) ) exit;
+
+function scp_seed_demo_content() {
+	if ( get_option( 'scp_demo_seeded' ) ) return;
+
+	$categories = array(
+		'Animals'             => 'Cats, dogs, dinosaurs, farm and ocean friends.',
+		'Holidays'            => 'Christmas, Halloween, Easter, and more.',
+		'Fantasy & Cute'      => 'Unicorns, mermaids, dragons, and kawaii fun.',
+		'Vehicles'            => 'Cars, trucks, trains, planes, and rockets.',
+		'Nature'              => 'Flowers, trees, rainbows, and weather.',
+		'Educational'         => 'Alphabet, numbers, shapes, and learning.',
+	);
+	$term_ids = array();
+	foreach ( $categories as $name => $desc ) {
+		$existing = term_exists( $name, 'topic_category' );
+		if ( $existing ) {
+			$term_ids[ $name ] = (int) $existing['term_id'];
+		} else {
+			$term = wp_insert_term( $name, 'topic_category', array( 'description' => $desc ) );
+			if ( ! is_wp_error( $term ) ) $term_ids[ $name ] = $term['term_id'];
+		}
+	}
+
+	$demo_dir = get_template_directory() . '/assets/demo-images/';
+	$demo_uri = get_template_directory_uri() . '/assets/demo-images/';
+
+	// [ topic title, image file basename (without scale suffix), category ]
+	$topics = array(
+		array( 'Dinosaur Coloring Pages', 'dinosaur', 'Animals' ),
+		array( 'Cat Coloring Pages', 'cat', 'Animals' ),
+		array( 'Dog Coloring Pages', 'dog', 'Animals' ),
+		array( 'Bunny Coloring Pages', 'rabbit', 'Animals' ),
+		array( 'Unicorn Coloring Pages', 'unicorn', 'Fantasy & Cute' ),
+		array( 'Princess Coloring Pages', 'princess', 'Fantasy & Cute' ),
+		array( 'Truck Coloring Pages', 'truck', 'Vehicles' ),
+		array( 'Flower Coloring Pages', 'flower', 'Nature' ),
+		array( 'Christmas Tree Coloring Pages', 'christmas-tree', 'Holidays' ),
+		array( 'Halloween Pumpkin Coloring Pages', 'halloween-pumpkin', 'Holidays' ),
+		array( 'Alphabet Coloring Pages', 'alphabet-a', 'Educational' ),
+		array( 'Flower Garden Coloring Pages', 'detailed-flower-garden', 'Nature' ),
+	);
+
+	$tints = array( '#DCEEFB', '#FFF3D6', '#DFF3E8', '#FDE4EE', '#EDE6FA', '#FFE9DC' );
+
+	foreach ( $topics as $i => $t ) {
+		list( $title, $basename, $cat_name ) = $t;
+
+		$post_id = wp_insert_post( array(
+			'post_type'   => 'coloring_topic',
+			'post_title'  => $title,
+			'post_status' => 'publish',
+			'post_content'=> '',
+		) );
+		if ( is_wp_error( $post_id ) ) continue;
+
+		if ( isset( $term_ids[ $cat_name ] ) ) {
+			wp_set_post_terms( $post_id, array( $term_ids[ $cat_name ] ), 'topic_category' );
+		}
+
+		$img_1_0 = $demo_uri . $basename . '_scale1.0.png';
+		$img_0_5 = $demo_uri . $basename . '_scale0.5.png';
+
+		update_post_meta( $post_id, 'scp_thumb_url', $img_1_0 );
+		update_post_meta( $post_id, 'scp_tint', $tints[ $i % count( $tints ) ] );
+		update_post_meta( $post_id, 'scp_age_range', '2-8' );
+		update_post_meta( $post_id, 'scp_pdf_all_url', '' ); // no real PDF yet — button hides itself.
+		update_post_meta( $post_id, 'scp_pdf_all_size', '' );
+
+		// Two demo "pages" per topic (the two LoRA-scale test renders) so the
+		// grid + modal have something real to show.
+		$pages = array(
+			array(
+				'title'     => $title . ' - Version 1',
+				'alt'       => $title . ' free printable coloring page for kids',
+				'thumb_url' => $img_1_0,
+				'png_url'   => $img_1_0,
+				'pdf_url'   => '',
+			),
+			array(
+				'title'     => $title . ' - Version 2',
+				'alt'       => $title . ' free printable coloring page for kids',
+				'thumb_url' => $img_0_5,
+				'png_url'   => $img_0_5,
+				'pdf_url'   => '',
+			),
+		);
+		update_post_meta( $post_id, 'scp_pages', $pages );
+	}
+
+	update_option( 'scp_demo_seeded', 1 );
+}
+add_action( 'init', 'scp_seed_demo_content', 20 );

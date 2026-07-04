@@ -1,0 +1,160 @@
+/*
+Theme Name: Simple Coloring Pages
+Theme URI: https://simplecoloringpagesforkids.com
+Author: Simple Coloring Pages
+Description: Custom theme for Free Printable Coloring Pages for Kids
+Version: 1.0.0
+Text Domain: simple-coloring-pages
+*/
+
+:root{
+  --bg: #FDFBF6;
+  --text: #3D4266;
+  --text-soft: #6B7194;
+  --text-mute: #9AA0C0;
+  --border: #F0EBE0;
+
+  --blue: #4E9FD9;
+  --blue-dark: #3A87C4;
+  --blue-bg: #EAF3FB;
+  --blue-bg2: #EAF5FD;
+  --blue-border: #D8E8F5;
+  --blue-border2: #BFDCF2;
+
+  --amber: #FFB84D;
+  --amber-dark: #F5A93A;
+  --amber-text: #5C4308;
+  --amber-bg: #FFF3D6;
+  --amber-bg2: #FFF6E3;
+  --amber-icon-text: #B08A3E;
+
+  --pink: #F48FB1;
+  --pink-bg: #FDE4EE;
+  --pink-text: #6D2643;
+
+  --green: #2FA070;
+  --green-dark: #268A5F;
+  --green-soft: #8ED0B5;
+  --green-bg: #DFF3E8;
+  --green-text: #1E5C43;
+  --green-text2: #4E8A6E;
+
+  --purple-bg: #EDE6FA;
+  --purple-bg2: #F5EFFB;
+
+  --ad-border: #DDD6EA;
+  --ad-bg: #FBFAFD;
+  --ad-text: #A8A2C4;
+
+  --footer-bg: #3D4266;
+  --footer-text: #D7DAF0;
+  --footer-mute: #8A90B4;
+
+  --font-display: 'Baloo 2', sans-serif;
+  --font-body: 'Nunito', sans-serif;
+
+  --page-max: 1200px;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:var(--font-body);color:var(--text);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--page-max);margin:0 auto;padding-left:24px;padding-right:24px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;cursor:pointer;font-family:var(--font-display);font-weight:700;border-radius:999px;border:none;white-space:nowrap}
+.btn-primary{background:var(--blue);color:#fff;padding:12px 26px;font-size:16px;box-shadow:0 4px 14px rgba(78,159,217,.35)}
+.btn-primary:hover{background:var(--blue-dark)}
+.btn-outline{background:#fff;color:var(--blue-dark);border:2px solid var(--blue-border2);padding:10px 28px;font-size:16px}
+.btn-outline:hover{background:var(--blue-bg2)}
+.btn-amber{background:var(--amber);color:var(--amber-text);padding:12px 26px;font-size:16px}
+.btn-amber:hover{background:var(--amber-dark)}
+.btn-green{background:var(--green);color:#fff;padding:14px 28px;font-size:17px;box-shadow:0 4px 14px rgba(47,160,112,.35)}
+.btn-green:hover{background:var(--green-dark)}
+.btn-pill-sm{background:var(--blue);color:#fff;padding:8px 15px;font-size:13px}
+.btn-pill-sm:hover{background:var(--blue-dark)}
+.btn-pill-outline-sm{background:#fff;color:var(--blue-dark);border:2px solid var(--blue-border);padding:6px 15px;font-size:13px}
+.btn-pill-outline-sm:hover{background:var(--blue-bg2)}
+
+/* ---------- Header ---------- */
+.site-header{background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50}
+.site-header-inner{max-width:var(--page-max);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:28px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-bars{display:flex;gap:3px;align-items:flex-end}
+.brand-bars div{width:9px;border-radius:5px 5px 3px 3px}
+.brand-name{font-family:var(--font-display);font-weight:800;font-size:21px;line-height:1;color:var(--text)}
+.brand-sub{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--text-mute);text-transform:uppercase}
+.main-nav{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav-link{text-decoration:none;color:var(--text);font-weight:700;font-size:15px;padding:8px 14px;border-radius:999px}
+.nav-link:hover,.nav-link.is-active{background:var(--blue-bg);color:var(--blue-dark)}
+.nav-cta{text-decoration:none;color:#fff;font-weight:700;font-size:15px;padding:9px 18px;border-radius:999px;background:var(--blue);font-family:var(--font-display)}
+.nav-cta:hover{background:var(--blue-dark)}
+.nav-search{text-decoration:none;width:38px;height:38px;border-radius:999px;background:var(--amber-bg);display:flex;align-items:center;justify-content:center;margin-left:6px}
+.nav-search:hover{background:#FFE9B8}
+.nav-search-icon{width:12px;height:12px;border:2.5px solid var(--amber-icon-text);border-radius:999px;position:relative}
+.nav-search-icon::after{content:"";position:absolute;width:7px;height:2.5px;background:var(--amber-icon-text);border-radius:2px;transform:rotate(45deg);right:-6px;bottom:-2px}
+.mobile-nav-btn{display:none;margin-left:auto;flex-direction:column;gap:5px;background:var(--blue-bg);border:none;border-radius:12px;padding:12px 11px;cursor:pointer}
+.mobile-nav-btn span{width:20px;height:2.5px;border-radius:2px;background:var(--blue-dark);display:block}
+
+@media (max-width:760px){
+  .main-nav{display:none !important}
+  .mobile-nav-btn{display:flex !important}
+}
+@media (max-width:1080px){
+  .has-sidebar{grid-template-columns:minmax(0,1fr) !important}
+  .sidebar{display:none !important}
+}
+
+/* ---------- Search box ---------- */
+.search-box{display:flex;background:#fff;border:2px solid var(--blue-border);border-radius:999px;padding:6px;box-shadow:0 6px 20px rgba(78,159,217,.12)}
+.search-box input{flex:1;border:none;outline:none;background:transparent;padding:12px 20px;font-family:var(--font-body);font-size:16px;color:var(--text);min-width:0}
+
+/* ---------- Ad placeholders ---------- */
+.ad-slot{border:2px dashed var(--ad-border);border-radius:16px;background:var(--ad-bg);display:flex;align-items:center;justify-content:center;color:var(--ad-text);font-size:12px;font-weight:800;letter-spacing:1.5px;text-align:center}
+
+/* ---------- Topic card ---------- */
+.topic-card{text-decoration:none;color:inherit;display:block;background:#fff;border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:0 4px 14px rgba(61,66,102,.06);transition:transform .15s ease,box-shadow .15s ease}
+.topic-card:hover{transform:translateY(-4px);box-shadow:0 10px 24px rgba(61,66,102,.12)}
+.topic-card-thumb{padding:22px 0;display:flex;justify-content:center}
+.topic-card-art{width:58%;aspect-ratio:17/22;background:#fff;border-radius:8px;box-shadow:0 3px 10px rgba(61,66,102,.12);display:flex;align-items:center;justify-content:center;padding:8px;overflow:hidden}
+.topic-card-art img{width:100%;height:100%;object-fit:contain}
+.topic-card-body{padding:16px 18px 18px}
+.topic-card-title{font-family:var(--font-display);font-weight:700;font-size:17px;line-height:1.25;color:var(--text)}
+.topic-card-meta{font-size:13px;font-weight:700;color:var(--text-mute);margin:4px 0 12px}
+.topic-card-cta{display:inline-block;background:var(--blue-bg);color:var(--blue-dark);font-family:var(--font-display);font-weight:700;font-size:14px;padding:8px 18px;border-radius:999px}
+
+/* dense grid variant (category page) */
+.topic-card-dense .topic-card-thumb{padding:16px 0}
+.topic-card-dense .topic-card-art{width:56%}
+.topic-card-dense .topic-card-body{padding:12px 14px 14px}
+.topic-card-dense .topic-card-title{font-size:15px}
+.topic-card-dense .topic-card-meta{font-size:12.5px;margin-top:3px}
+
+/* ---------- FAQ ---------- */
+.faq-item{background:#FAF8F2;border:1px solid var(--border);border-radius:14px;padding:13px 18px}
+.faq-item summary{font-family:var(--font-display);font-weight:700;font-size:15.5px;color:var(--text);cursor:pointer}
+.faq-item p{font-size:14.5px;line-height:1.7;color:var(--text-soft);margin:10px 0 2px}
+
+/* ---------- How-to step cards ---------- */
+.step-card{border-radius:18px;padding:20px 22px}
+.step-num{width:34px;height:34px;border-radius:999px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.step-title{font-family:var(--font-display);font-weight:700;font-size:16px;color:var(--text)}
+.step-desc{font-size:14px;line-height:1.6;color:var(--text-soft);margin-top:4px}
+
+/* ---------- Footer ---------- */
+.site-footer{background:var(--footer-bg);margin-top:56px}
+.site-footer .wrap{padding-top:44px;padding-bottom:28px}
+.footer-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px}
+.footer-heading{font-family:var(--font-display);font-weight:700;font-size:14px;letter-spacing:.8px;color:var(--footer-mute);text-transform:uppercase;margin-bottom:12px}
+.footer-link{text-decoration:none;color:var(--footer-text);font-size:14px}
+.footer-link:hover{color:#fff}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.14);margin-top:24px;padding-top:18px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--footer-mute)}
+
+/* ---------- Layout helpers ---------- */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:20px}
+.grid-cards-dense{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px}
+.grid-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+
+.section-card{background:#fff;border:1px solid var(--border);border-radius:24px;padding:32px clamp(20px,4vw,40px)}
+h1,h2,h3{font-family:var(--font-display);color:var(--text);margin:0}
