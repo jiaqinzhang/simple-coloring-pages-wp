@@ -45,45 +45,81 @@ while ( have_posts() ) : the_post();
 			</div>
 		<?php endif; ?>
 
-		<?php if ( $show_ads ) : ?>
-			<div class="ad-slot" style="height:96px;margin-bottom:28px">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
-		<?php endif; ?>
-
+		<!-- ========== LARGE IMAGE VIEWER (方案A) ========== -->
 		<?php if ( $page_count > 0 ) : ?>
-			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px">
-				<?php foreach ( $pages as $i => $p ) :
-					if ( $i === 12 && $show_ads ) : ?>
-						<div class="ad-slot" style="height:96px;grid-column:1/-1">AD PLACEHOLDER &middot; IN-GRID RESPONSIVE</div>
+			<div style="display:flex;gap:24px;margin-bottom:32px;flex-wrap:wrap;align-items:flex-start">
+				<!-- 大图区域 -->
+				<div style="flex:1;min-width:280px">
+					<div style="background:#F4F8FC;border-radius:20px;padding:28px;display:flex;justify-content:center;aspect-ratio:auto;min-height:500px">
+						<div style="width:100%;max-width:400px;display:flex;align-items:center">
+							<img id="scp-main-image" src="<?php echo esc_url( $pages[0]['png_url'] ?? '' ); ?>" alt="<?php echo esc_attr( $pages[0]['alt'] ?? $pages[0]['title'] ?? '' ); ?>" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
+						</div>
+					</div>
+				</div>
+
+				<!-- 下载信息区 -->
+				<div style="flex:0 1 340px;display:flex;flex-direction:column;gap:16px">
+					<div>
+						<div style="font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--text-mute);text-transform:uppercase;margin-bottom:8px"><?php the_title(); ?></div>
+						<h2 id="scp-page-title" style="font-size:24px;line-height:1.3;margin:0 0 12px"><?php echo esc_html( $pages[0]['title'] ?? '' ); ?></h2>
+						<p style="font-size:14.5px;line-height:1.65;color:var(--text-soft);margin:0">High-resolution printable, sized for US Letter &amp; A4. Free for personal and classroom use.</p>
+					</div>
+
+					<!-- 主要下载按钮 -->
+					<div style="display:flex;flex-direction:column;gap:10px">
+						<a id="scp-download-pdf" href="<?php echo esc_url( $pages[0]['pdf_url'] ?? '#' ); ?>" class="btn btn-primary" style="text-align:center">Download PDF</a>
+						<a id="scp-download-png" href="<?php echo esc_url( $pages[0]['png_url'] ?? '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download PNG</a>
+						<button onclick="window.print()" class="btn btn-outline">Print This Page</button>
+					</div>
+
+					<!-- Google AdSense 广告位 (300x250 或 336x280) -->
+					<?php if ( $show_ads ) : ?>
+						<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
+							<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
+						</div>
 					<?php endif; ?>
-					<div style="background:#fff;border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 3px 10px rgba(61,66,102,.06)">
+				</div>
+			</div>
+
+			<!-- 缩略图滚动列表 -->
+			<div style="margin-bottom:32px">
+				<h3 style="font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text-soft)">All Pages</h3>
+				<div id="scp-thumbnails" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
+					<?php foreach ( $pages as $i => $p ) : ?>
 						<button
-							data-open-preview
+							class="scp-thumb-btn"
+							data-index="<?php echo esc_attr( $i ); ?>"
 							data-title="<?php echo esc_attr( $p['title'] ?? '' ); ?>"
 							data-png="<?php echo esc_url( $p['png_url'] ?? '' ); ?>"
 							data-pdf="<?php echo esc_url( $p['pdf_url'] ?? '' ); ?>"
-							aria-label="<?php echo esc_attr( $p['alt'] ?? ( $p['title'] ?? '' ) ); ?>"
-							style="display:block;width:100%;border:none;cursor:zoom-in;background:#F4F8FC;padding:16px 0"
+							data-alt="<?php echo esc_attr( $p['alt'] ?? $p['title'] ?? '' ); ?>"
+							style="background:#fff;border:2px solid var(--border);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;transition:all 200ms;aspect-ratio:11/14"
+							<?php echo $i === 0 ? 'style="background:#fff;border:3px solid var(--blue);border-radius:12px;overflow:hidden;padding:0;cursor:pointer"' : ''; ?>
 						>
-							<div style="width:64%;aspect-ratio:17/22;background:#fff;border-radius:6px;box-shadow:0 2px 8px rgba(61,66,102,.14);margin:0 auto;overflow:hidden">
-								<?php if ( ! empty( $p['thumb_url'] ) ) : ?>
-									<img src="<?php echo esc_url( $p['thumb_url'] ); ?>" alt="<?php echo esc_attr( $p['alt'] ?? '' ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:contain">
-								<?php endif; ?>
-							</div>
+							<?php if ( ! empty( $p['thumb_url'] ) ) : ?>
+								<img src="<?php echo esc_url( $p['thumb_url'] ); ?>" alt="<?php echo esc_attr( $p['alt'] ?? '' ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#F4F8FC;padding:4px">
+							<?php endif; ?>
 						</button>
-						<div style="padding:12px 14px 15px">
-							<div style="font-family:var(--font-display);font-weight:700;font-size:15px;line-height:1.3;margin-bottom:10px"><?php echo esc_html( $p['title'] ?? '' ); ?></div>
-							<div style="display:flex;gap:8px;flex-wrap:wrap">
-								<?php if ( ! empty( $p['pdf_url'] ) ) : ?>
-									<a href="<?php echo esc_url( $p['pdf_url'] ); ?>" class="btn btn-pill-sm">Download PDF</a>
-								<?php endif; ?>
-								<a href="<?php echo esc_url( $p['png_url'] ?? '#' ); ?>" class="btn btn-pill-outline-sm">Print</a>
-							</div>
-						</div>
-					</div>
-				<?php endforeach; ?>
+					<?php endforeach; ?>
+				</div>
 			</div>
+
+			<!-- 中间广告位 (728x90 或响应式) -->
+			<?php if ( $show_ads ) : ?>
+				<div style="margin:32px 0;text-align:center">
+					<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="0987654321" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+				</div>
+			<?php endif; ?>
+
 		<?php else : ?>
-			<div class="ad-slot" style="height:160px;border-style:solid">Pages for this topic haven't been imported yet.</div>
+			<div style="padding:40px;background:#F9F9F9;border-radius:12px;text-align:center;color:var(--text-soft)">Pages for this topic haven't been imported yet.</div>
+		<?php endif; ?>
+
+		<!-- Google AdSense 底部广告位 (728x90) -->
+		<?php if ( $show_ads ) : ?>
+			<div style="margin:40px 0;text-align:center">
+				<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="5555555555" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
+			</div>
 		<?php endif; ?>
 
 		<section style="margin-top:48px">
@@ -123,10 +159,6 @@ while ( have_posts() ) : the_post();
 			</div>
 		</section>
 
-		<?php if ( $show_ads ) : ?>
-			<div class="ad-slot" style="height:96px;margin:36px 0 0">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
-		<?php endif; ?>
-
 		<section class="section-card" style="margin-top:36px">
 			<h2 style="font-size:24px;margin-bottom:16px">Frequently Asked Questions</h2>
 			<div style="display:flex;flex-direction:column;gap:10px">
@@ -147,31 +179,37 @@ while ( have_posts() ) : the_post();
 		</section>
 	</main>
 
-	<!-- ============ PREVIEW MODAL ============ -->
-	<div id="scp-preview-modal" data-close-preview style="display:none;position:fixed;inset:0;background:rgba(61,66,102,.55);z-index:100;align-items:center;justify-content:center;padding:20px">
-		<div data-modal-card style="background:#fff;border-radius:24px;max-width:760px;width:100%;max-height:90vh;overflow:auto;padding:28px;position:relative;box-shadow:0 24px 60px rgba(61,66,102,.35)">
-			<button data-close-preview aria-label="Close" style="position:absolute;top:16px;right:16px;width:38px;height:38px;border-radius:999px;border:none;background:#F2EFE7;color:var(--text-soft);font-size:18px;font-weight:800;cursor:pointer">&times;</button>
-			<div style="display:flex;gap:28px;flex-wrap:wrap">
-				<div style="flex:1;min-width:260px;background:#F4F8FC;border-radius:18px;padding:24px;display:flex;justify-content:center">
-					<div style="width:82%;aspect-ratio:17/22;background:#fff;border-radius:8px;box-shadow:0 4px 16px rgba(61,66,102,.16);overflow:hidden">
-						<img data-modal-img src="" alt="" style="width:100%;height:100%;object-fit:contain">
-					</div>
-				</div>
-				<div style="flex:1;min-width:240px;display:flex;flex-direction:column;justify-content:center">
-					<div style="font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--text-mute);text-transform:uppercase;margin-bottom:6px"><?php the_title(); ?></div>
-					<h2 data-modal-title style="font-size:26px;margin-bottom:8px"></h2>
-					<p style="font-size:14.5px;line-height:1.65;color:var(--text-soft);margin:0 0 20px">High-resolution printable, sized for US Letter &amp; A4. Free for personal and classroom use.</p>
-					<div style="display:flex;flex-direction:column;gap:10px">
-						<a data-modal-download href="#" class="btn btn-primary">Download PDF</a>
-						<div style="display:flex;gap:10px">
-							<button onclick="window.print()" class="btn btn-outline" style="flex:1">Print</button>
-							<a data-modal-download-png href="#" class="btn btn-outline" style="flex:1" download>Download PNG</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const thumbBtns = document.querySelectorAll('.scp-thumb-btn');
+		const mainImg = document.getElementById('scp-main-image');
+		const pageTitle = document.getElementById('scp-page-title');
+		const downloadPdf = document.getElementById('scp-download-pdf');
+		const downloadPng = document.getElementById('scp-download-png');
+
+		thumbBtns.forEach(btn => {
+			btn.addEventListener('click', function() {
+				const title = this.getAttribute('data-title');
+				const png = this.getAttribute('data-png');
+				const pdf = this.getAttribute('data-pdf');
+				const alt = this.getAttribute('data-alt');
+
+				mainImg.src = png;
+				mainImg.alt = alt;
+				pageTitle.textContent = title;
+				downloadPdf.href = pdf;
+				downloadPng.href = png;
+
+				thumbBtns.forEach(b => {
+					b.style.borderColor = 'var(--border)';
+					b.style.borderWidth = '2px';
+				});
+				this.style.borderColor = 'var(--blue)';
+				this.style.borderWidth = '3px';
+			});
+		});
+	});
+	</script>
 
 <?php endwhile; ?>
 <?php get_footer(); ?>
