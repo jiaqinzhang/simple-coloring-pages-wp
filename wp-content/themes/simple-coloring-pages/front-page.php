@@ -82,7 +82,7 @@ $showcase_bgs  = array( 'var(--blue-bg2)', 'var(--amber-bg2)', 'var(--purple-bg2
 if ( ! is_wp_error( $showcase_cats ) ) :
 	$si = 0;
 	foreach ( $showcase_cats as $cat ) :
-		$topics = new WP_Query( array( 'post_type' => 'coloring_topic', 'posts_per_page' => 8, 'tax_query' => array( array( 'taxonomy' => 'topic_category', 'field' => 'term_id', 'terms' => $cat->term_id ) ) ) );
+		$topics = new WP_Query( array( 'post_type' => 'coloring_topic', 'posts_per_page' => 6, 'tax_query' => array( array( 'taxonomy' => 'topic_category', 'field' => 'term_id', 'terms' => $cat->term_id ) ) ) );
 		if ( ! $topics->have_posts() ) { wp_reset_postdata(); continue; }
 		?>
 		<section class="wrap" style="padding-top:52px;padding-bottom:8px">
