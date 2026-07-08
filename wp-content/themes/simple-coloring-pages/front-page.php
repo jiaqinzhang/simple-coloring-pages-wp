@@ -34,7 +34,11 @@ get_header();
 	</div>
 	<div class="grid-cards">
 		<?php
-		$popular = new WP_Query( array( 'post_type' => 'coloring_topic', 'posts_per_page' => 8, 'meta_key' => 'scp_view_count', 'orderby' => 'meta_value_num date', 'order' => 'DESC' ) );
+		// No real view-count tracking exists yet, so "Popular" is a random
+		// sample of published topics rather than a hard dependency on a
+		// scp_view_count meta key that's never actually populated (that
+		// dependency silently returned zero results).
+		$popular = new WP_Query( array( 'post_type' => 'coloring_topic', 'posts_per_page' => 8, 'orderby' => 'rand' ) );
 		$i = 0;
 		while ( $popular->have_posts() ) : $popular->the_post();
 			scp_render_topic_card( get_the_ID(), $i++ );
