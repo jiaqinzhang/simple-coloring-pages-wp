@@ -30,6 +30,51 @@ function scp_print_ld_json( $data ) {
 	echo '<script type="application/ld+json">' . wp_json_encode( $data ) . '</script>' . "\n";
 }
 
+/**
+ * Only the first N sibling pages of each topic (by menu_order, the same
+ * field used for the "More {Topic}" grid ordering) are the "most complete /
+ * representative" pages kept in the search index; the rest stay reachable,
+ * downloadable, and internally linked but are excluded from indexing to
+ * avoid flooding search with near-duplicate templated pages.
+ */
+define( 'SCP_INDEXED_SIBLINGS_PER_TOPIC', 2 );
+
+function scp_page_should_index( $post_id ) {
+	$post = get_post( $post_id );
+	return $post && (int) $post->menu_order < SCP_INDEXED_SIBLINGS_PER_TOPIC;
+}
+
+function scp_output_robots_meta() {
+	if ( is_singular( 'coloring_page' ) ) {
+		$post_id = get_the_ID();
+		if ( ! scp_page_should_index( $post_id ) ) {
+			echo '<meta name="robots" content="noindex, follow">' . "\n";
+			return;
+		}
+	}
+	echo '<meta name="robots" content="index, follow">' . "\n";
+}
+add_action( 'wp_head', 'scp_output_robots_meta', 1 );
+
+/**
+ * Keep the noindex'd majority of coloring_page siblings out of the native
+ * WordPress XML sitemap (wp-sitemap.xml) -- only the indexed 1-3 per topic
+ * (see scp_page_should_index()) should ever appear there.
+ */
+function scp_sitemap_index_only_where( $where ) {
+	global $wpdb;
+	remove_filter( 'posts_where', 'scp_sitemap_index_only_where' );
+	return $where . $wpdb->prepare( " AND {$wpdb->posts}.menu_order < %d", SCP_INDEXED_SIBLINGS_PER_TOPIC );
+}
+
+function scp_sitemap_query_args( $args, $post_type ) {
+	if ( 'coloring_page' === $post_type ) {
+		add_filter( 'posts_where', 'scp_sitemap_index_only_where' );
+	}
+	return $args;
+}
+add_filter( 'wp_sitemaps_posts_query_args', 'scp_sitemap_query_args', 10, 2 );
+
 function scp_output_seo_meta() {
 	$site_name = get_bloginfo( 'name' ) ?: 'Simple Coloring Pages';
 
