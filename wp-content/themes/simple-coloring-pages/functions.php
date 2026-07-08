@@ -266,3 +266,4 @@ function scp_render_logo_bars( $size = 'header' ) {
 }
 
 require get_template_directory() . '/inc/demo-content.php';
+require get_template_directory() . '/inc/seo-meta.php';
