@@ -86,7 +86,7 @@ $show_ads = true; // TODO: wire to a theme option once AdSense/Mediavine is appr
 
 <!-- ============ CATEGORY SHOWCASES ============ -->
 <?php
-$showcase_cats = get_terms( array( 'taxonomy' => 'topic_category', 'hide_empty' => true, 'number' => 3 ) );
+$showcase_cats = get_terms( array( 'taxonomy' => 'topic_category', 'hide_empty' => true ) );
 $showcase_bgs  = array( 'var(--blue-bg2)', 'var(--amber-bg2)', 'var(--purple-bg2)' );
 if ( ! is_wp_error( $showcase_cats ) ) :
 	$si = 0;
@@ -104,14 +104,7 @@ if ( ! is_wp_error( $showcase_cats ) ) :
 					<?php
 					$ti = 0;
 					while ( $topics->have_posts() ) : $topics->the_post();
-						$tint = scp_tint_for( $ti++ );
-						?>
-						<a href="<?php the_permalink(); ?>" style="text-decoration:none;color:inherit;display:block;background:#fff;border-radius:16px;padding:14px 14px 15px;box-shadow:0 2px 8px rgba(61,66,102,.07)">
-							<div style="height:6px;border-radius:999px;background:<?php echo esc_attr( $tint ); ?>;margin-bottom:12px;width:44px"></div>
-							<div style="font-family:var(--font-display);font-weight:700;font-size:14.5px;line-height:1.3"><?php the_title(); ?></div>
-							<div style="font-size:12px;font-weight:700;color:var(--text-mute);margin-top:3px"><?php echo esc_html( count( scp_get_pages( get_the_ID() ) ) ); ?> pages</div>
-						</a>
-						<?php
+						scp_render_topic_card( get_the_ID(), $ti++, true );
 					endwhile;
 					wp_reset_postdata();
 					?>

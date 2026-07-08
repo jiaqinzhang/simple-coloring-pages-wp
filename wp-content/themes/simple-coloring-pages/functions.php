@@ -5,7 +5,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'SCP_THEME_VERSION', '1.0.0' );
+define( 'SCP_THEME_VERSION', '1.0.1' );
 
 /* ------------------------------------------------------------------ */
 /* Theme setup                                                         */
@@ -43,7 +43,7 @@ function scp_register_post_types() {
 			'add_new_item'  => __( 'Add New Coloring Topic', 'simple-coloring-pages' ),
 		),
 		'public'        => true,
-		'has_archive'   => false,
+		'has_archive'   => true,
 		'show_in_rest'  => true,
 		'menu_icon'     => 'dashicons-art',
 		'rewrite'       => array( 'slug' => 'coloring-pages' ),
@@ -58,7 +58,7 @@ function scp_register_post_types() {
 		'hierarchical'  => true,
 		'public'        => true,
 		'show_in_rest'  => true,
-		'rewrite'       => array( 'slug' => 'category' ),
+		'rewrite'       => array( 'slug' => 'coloring-category' ),
 	) );
 
 	// Single-image landing page (one per printable page inside a coloring_topic).
@@ -121,15 +121,27 @@ add_filter( 'post_type_link', 'scp_coloring_page_permalink', 10, 2 );
  * scp_age_range   (string) e.g. "2-10"
  */
 function scp_register_meta_fields() {
-	$fields = array( 'scp_pages', 'scp_tint', 'scp_intro', 'scp_pdf_all_url', 'scp_pdf_all_size', 'scp_age_range' );
+	$fields = array( 'scp_tint', 'scp_intro', 'scp_pdf_all_url', 'scp_pdf_all_size', 'scp_age_range' );
 	foreach ( $fields as $field ) {
 		register_post_meta( 'coloring_topic', $field, array(
 			'show_in_rest' => true,
 			'single'       => true,
-			'type'         => $field === 'scp_pages' ? 'array' : 'string',
+			'type'         => 'string',
 			'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
 		) );
 	}
+
+	register_post_meta( 'coloring_topic', 'scp_pages', array(
+		'show_in_rest' => array(
+			'schema' => array(
+				'type'  => 'array',
+				'items' => array( 'type' => 'object' ),
+			),
+		),
+		'single'        => true,
+		'type'          => 'array',
+		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+	) );
 }
 add_action( 'init', 'scp_register_meta_fields' );
 
@@ -165,7 +177,7 @@ function scp_register_coloring_page_meta_fields() {
 		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
 	) );
 	register_post_meta( 'coloring_page', 'scp_vocabulary', array(
-		'show_in_rest'  => true,
+		'show_in_rest'  => array( 'schema' => array( 'type' => 'array', 'items' => array( 'type' => 'string' ) ) ),
 		'single'        => true,
 		'type'          => 'array',
 		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },

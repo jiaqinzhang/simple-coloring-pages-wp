@@ -8,6 +8,7 @@ get_header();
 
 while ( have_posts() ) : the_post();
 	$post_id      = get_the_ID();
+	$page_title   = get_the_title( $post_id );
 	$topic_id     = (int) get_post_meta( $post_id, 'scp_topic_id', true );
 	$png_url      = get_post_meta( $post_id, 'scp_png_url', true );
 	$pdf_url      = get_post_meta( $post_id, 'scp_pdf_url', true );
@@ -55,6 +56,13 @@ while ( have_posts() ) : the_post();
 
 		<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.15;margin:0 0 20px"><?php the_title(); ?></h1>
 
+		<!-- 正文介绍 -->
+		<?php if ( $intro ) : ?>
+			<section class="section-card" style="margin-bottom:24px">
+				<p style="font-size:15.5px;line-height:1.75;color:var(--text-soft);margin:0"><?php echo esc_html( $intro ); ?></p>
+			</section>
+		<?php endif; ?>
+
 		<div style="display:flex;gap:24px;margin-bottom:28px;flex-wrap:wrap;align-items:flex-start">
 			<!-- 大图区域 -->
 			<div style="flex:1;min-width:280px">
@@ -87,9 +95,9 @@ while ( have_posts() ) : the_post();
 				</div>
 
 				<div style="display:flex;flex-direction:column;gap:10px">
-					<a href="<?php echo esc_url( $pdf_url ?: '#' ); ?>" class="btn btn-primary" style="text-align:center">Download PDF</a>
-					<a href="<?php echo esc_url( $png_url ?: '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download PNG</a>
-					<button onclick="window.print()" class="btn btn-outline">Print This Page</button>
+					<a href="<?php echo esc_url( $pdf_url ?: '#' ); ?>" class="btn btn-primary" style="text-align:center">Download <?php echo esc_html( $page_title ); ?> PDF</a>
+					<a href="<?php echo esc_url( $png_url ?: '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download <?php echo esc_html( $page_title ); ?> PNG</a>
+					<button onclick="window.print()" class="btn btn-outline">Print <?php echo esc_html( $page_title ); ?></button>
 				</div>
 
 				<?php if ( $show_ads ) : ?>
@@ -100,10 +108,15 @@ while ( have_posts() ) : the_post();
 			</div>
 		</div>
 
-		<!-- 正文介绍 -->
-		<?php if ( $intro ) : ?>
-			<section class="section-card" style="margin-bottom:24px">
-				<p style="font-size:15.5px;line-height:1.75;color:var(--text-soft);margin:0"><?php echo esc_html( $intro ); ?></p>
+		<!-- 同 Topic 下所有单图 -->
+		<?php if ( count( $siblings ) > 1 ) : ?>
+			<section style="margin-bottom:32px">
+				<h3 style="font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text-soft)">More <?php echo esc_html( $topic_title ); ?></h3>
+				<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
+					<?php foreach ( $siblings as $sib ) : ?>
+						<?php scp_render_page_thumb( $sib->ID, $sib->ID === $post_id ); ?>
+					<?php endforeach; ?>
+				</div>
 			</section>
 		<?php endif; ?>
 
@@ -133,18 +146,6 @@ while ( have_posts() ) : the_post();
 			<div style="margin-bottom:32px;text-align:center">
 				<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="0987654321" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
 			</div>
-		<?php endif; ?>
-
-		<!-- 同 Topic 下所有单图 -->
-		<?php if ( count( $siblings ) > 1 ) : ?>
-			<section style="margin-bottom:32px">
-				<h3 style="font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text-soft)">More <?php echo esc_html( $topic_title ); ?></h3>
-				<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
-					<?php foreach ( $siblings as $sib ) : ?>
-						<?php scp_render_page_thumb( $sib->ID, $sib->ID === $post_id ); ?>
-					<?php endforeach; ?>
-				</div>
-			</section>
 		<?php endif; ?>
 
 		<?php if ( $topic_id ) : ?>
