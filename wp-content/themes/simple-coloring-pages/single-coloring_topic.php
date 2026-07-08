@@ -36,7 +36,7 @@ while ( have_posts() ) : the_post();
 
 		<h1 style="font-size:clamp(28px,4vw,40px);line-height:1.15;margin:0 0 12px">Free Printable <?php the_title(); ?> for Kids</h1>
 		<p style="font-size:16.5px;line-height:1.7;color:var(--text-soft);max-width:760px;margin:0 0 20px">
-			<?php echo $intro ? esc_html( $intro ) : esc_html( $page_count . ' free printable coloring pages. Perfect for kids ages ' . $age_range . ', at home or in the classroom. Download any page as a PDF, or grab the whole set at once.' ); ?>
+			<?php echo $intro ? esc_html( $intro ) : esc_html( $page_count . ' free printable coloring pages. Perfect for kids ' . $age_range . ', at home or in the classroom. Download any page as a PDF, or grab the whole set at once.' ); ?>
 		</p>
 
 		<?php if ( $pdf_all_url ) : ?>
