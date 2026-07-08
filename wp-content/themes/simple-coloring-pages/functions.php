@@ -119,9 +119,12 @@ add_filter( 'post_type_link', 'scp_coloring_page_permalink', 10, 2 );
  * scp_pdf_all_url (string) URL to the "download all pages" bundled PDF.
  * scp_pdf_all_size (string) Human readable file size, e.g. "6.2 MB".
  * scp_age_range   (string) e.g. "2-10"
+ * scp_topic_body  (string) 300-500 word body copy, paragraphs joined by "\n\n"
+ *                          (only set on the top 50 highest-traffic topics).
+ * scp_topic_faq   (array)  Each item: [ q, a ] -- varied per topic, same 50.
  */
 function scp_register_meta_fields() {
-	$fields = array( 'scp_tint', 'scp_intro', 'scp_pdf_all_url', 'scp_pdf_all_size', 'scp_age_range' );
+	$fields = array( 'scp_tint', 'scp_intro', 'scp_pdf_all_url', 'scp_pdf_all_size', 'scp_age_range', 'scp_topic_body' );
 	foreach ( $fields as $field ) {
 		register_post_meta( 'coloring_topic', $field, array(
 			'show_in_rest' => true,
@@ -132,6 +135,19 @@ function scp_register_meta_fields() {
 	}
 
 	register_post_meta( 'coloring_topic', 'scp_pages', array(
+		'show_in_rest' => array(
+			'schema' => array(
+				'type'  => 'array',
+				'items' => array( 'type' => 'object' ),
+			),
+		),
+		'single'        => true,
+		'type'          => 'array',
+		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+	) );
+
+	// P2: 300-500 word body + FAQ, present only on the top 50 highest-traffic topics.
+	register_post_meta( 'coloring_topic', 'scp_topic_faq', array(
 		'show_in_rest' => array(
 			'schema' => array(
 				'type'  => 'array',

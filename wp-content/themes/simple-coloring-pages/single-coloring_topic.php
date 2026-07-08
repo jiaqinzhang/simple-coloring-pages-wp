@@ -17,6 +17,12 @@ while ( have_posts() ) : the_post();
 	$terms = get_the_terms( $post_id, 'topic_category' );
 	$primary_cat = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
 
+	// P2: 300-500 word original body + varied FAQ, present only on the
+	// top 50 highest-traffic topics; every other topic falls back to the
+	// shorter generic copy further down.
+	$topic_body = get_post_meta( $post_id, 'scp_topic_body', true );
+	$topic_faq  = get_post_meta( $post_id, 'scp_topic_faq', true );
+
 	// Once single-image pages exist for this topic, link straight to them
 	// (real URLs, crawlable) instead of the old in-page JS image swap.
 	$child_pages = scp_get_page_siblings( $post_id );
@@ -130,6 +136,15 @@ while ( have_posts() ) : the_post();
 			</div>
 		</section>
 
+		<?php if ( $topic_body ) : ?>
+		<section class="section-card scp-prose" style="margin-top:44px">
+			<h2 style="font-size:24px;margin-bottom:16px">About Our <?php the_title(); ?></h2>
+			<?php foreach ( explode( "\n\n", $topic_body ) as $para ) : ?>
+				<p><?php echo esc_html( $para ); ?></p>
+			<?php endforeach; ?>
+		</section>
+		<?php endif; ?>
+
 		<section style="margin-top:44px">
 			<h2 style="font-size:24px;margin-bottom:16px">Related Coloring Pages</h2>
 			<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px">
@@ -162,7 +177,7 @@ while ( have_posts() ) : the_post();
 			<h2 style="font-size:24px;margin-bottom:16px">Frequently Asked Questions</h2>
 			<div style="display:flex;flex-direction:column;gap:10px">
 				<?php
-				$faqs = array(
+				$faqs = is_array( $topic_faq ) && $topic_faq ? $topic_faq : array(
 					array( 'q' => 'Are these coloring pages free?', 'a' => 'Yes &mdash; all pages are 100% free to download, print, and color. No account or email required.' ),
 					array( 'q' => 'Can I print these coloring pages?', 'a' => 'Absolutely. Every page is a high-resolution PDF sized for standard US Letter and A4 paper.' ),
 					array( 'q' => 'Are these pages suitable for preschoolers?', 'a' => 'Yes! Pages marked "easy" or "cute" have big, bold outlines perfect for ages 2-4, while detailed scenes suit older kids.' ),
