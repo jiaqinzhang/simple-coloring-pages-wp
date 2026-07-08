@@ -19,7 +19,7 @@
 				<div class="brand-sub">for Kids &middot; 100% Free</div>
 			</div>
 		</a>
-		<nav class="main-nav">
+		<nav class="main-nav" id="scp-main-nav">
 			<?php
 			$categories = get_terms( array( 'taxonomy' => 'topic_category', 'hide_empty' => false, 'number' => 5 ) );
 			if ( ! is_wp_error( $categories ) ) {
@@ -34,6 +34,18 @@
 				<span class="nav-search-icon"></span>
 			</a>
 		</nav>
-		<button class="mobile-nav-btn" aria-label="Menu"><span></span><span></span><span></span></button>
+		<button class="mobile-nav-btn" id="scp-mobile-nav-btn" aria-label="Menu" aria-expanded="false" aria-controls="scp-main-nav"><span></span><span></span><span></span></button>
 	</div>
 </header>
+<script>
+(function() {
+	var btn = document.getElementById('scp-mobile-nav-btn');
+	var nav = document.getElementById('scp-main-nav');
+	if (!btn || !nav) return;
+	btn.addEventListener('click', function() {
+		var open = nav.classList.toggle('is-open');
+		btn.classList.toggle('is-open', open);
+		btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+	});
+})();
+</script>
