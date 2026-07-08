@@ -40,7 +40,7 @@
 					<a href="<?php echo esc_url( home_url( '/contact' ) ); ?>" class="footer-link">Contact</a>
 					<a href="<?php echo esc_url( home_url( '/privacy-policy' ) ); ?>" class="footer-link">Privacy Policy</a>
 					<a href="<?php echo esc_url( home_url( '/terms' ) ); ?>" class="footer-link">Terms of Use</a>
-					<a href="<?php echo esc_url( home_url( '/sitemap.xml' ) ); ?>" class="footer-link">Sitemap</a>
+					<a href="<?php echo esc_url( home_url( '/sitemap/' ) ); ?>" class="footer-link">Sitemap</a>
 				</div>
 			</div>
 		</div>
