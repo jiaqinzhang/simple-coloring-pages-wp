@@ -16,6 +16,9 @@ $topics = new WP_Query( array(
 	'paged'          => $paged,
 	'tax_query'      => array( array( 'taxonomy' => 'topic_category', 'field' => 'term_id', 'terms' => $term->term_id ) ),
 ) );
+
+$scp_category_copy = include get_template_directory() . '/inc/category-copy.php';
+$scp_about_text     = $scp_category_copy[ $term->slug ] ?? '';
 ?>
 
 <section style="background:linear-gradient(180deg,var(--blue-bg2) 0%,var(--bg) 100%)">
@@ -66,10 +69,15 @@ $topics = new WP_Query( array(
 		<?php endif; ?>
 		<?php wp_reset_postdata(); ?>
 
-		<section class="section-card" style="margin-top:36px">
+		<section class="section-card scp-prose" style="margin-top:36px">
 			<h2 style="font-size:24px;margin-bottom:12px">About Our <?php echo esc_html( $term->name ); ?> Coloring Pages</h2>
-			<p style="font-size:15.5px;line-height:1.75;color:var(--text-soft);margin:0 0 10px">Every page features original artwork with bold outlines that are easy for little hands to color.</p>
-			<p style="font-size:15.5px;line-height:1.75;color:var(--text-soft);margin:0">Pages range from simple toddler-friendly designs to more detailed scenes for older kids &mdash; perfect for home, preschool, and elementary classrooms.</p>
+			<?php if ( $scp_about_text ) : ?>
+				<?php foreach ( explode( "\n\n", $scp_about_text ) as $para ) : ?>
+					<p><?php echo esc_html( $para ); ?></p>
+				<?php endforeach; ?>
+			<?php else : ?>
+				<p>Every page features original artwork with bold outlines that are easy for little hands to color. Pages range from simple toddler-friendly designs to more detailed scenes for older kids &mdash; perfect for home, preschool, and elementary classrooms.</p>
+			<?php endif; ?>
 		</section>
 
 		<section style="margin-top:36px">
