@@ -28,7 +28,14 @@ $has_results = have_posts();
 <main class="wrap" style="padding-top:8px">
 	<?php if ( $has_results ) : ?>
 		<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px">
-			<h2 style="font-size:22px"><?php printf( esc_html__( '%d results for "%s"', 'simple-coloring-pages' ), (int) $GLOBALS['wp_query']->found_posts, esc_html( $query_str ) ); ?></h2>
+			<h2 style="font-size:22px"><?php
+				$found = (int) $GLOBALS['wp_query']->found_posts;
+				printf(
+					esc_html( _n( '%d result for "%s"', '%d results for "%s"', $found, 'simple-coloring-pages' ) ),
+					$found,
+					esc_html( $query_str )
+				);
+			?></h2>
 			<span style="font-size:13.5px;font-weight:800;color:var(--text-mute)">Sorted by relevance</span>
 		</div>
 		<div class="grid-cards">

@@ -265,5 +265,16 @@ function scp_render_logo_bars( $size = 'header' ) {
 	}
 }
 
+/** Keep site search scoped to coloring_topic — otherwise WordPress also
+ *  matches coloring_page (single-image) posts and utility pages like
+ *  Privacy Policy, which search.php's display loop silently skips, leaving
+ *  a mismatched "N results" count with an empty results grid. */
+function scp_restrict_search_post_types( $query ) {
+	if ( ! is_admin() && $query->is_search() && $query->is_main_query() ) {
+		$query->set( 'post_type', 'coloring_topic' );
+	}
+}
+add_action( 'pre_get_posts', 'scp_restrict_search_post_types' );
+
 require get_template_directory() . '/inc/demo-content.php';
 require get_template_directory() . '/inc/seo-meta.php';
