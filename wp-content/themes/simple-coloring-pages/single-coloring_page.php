@@ -11,6 +11,7 @@ while ( have_posts() ) : the_post();
 	$page_title   = get_the_title( $post_id );
 	$topic_id     = (int) get_post_meta( $post_id, 'scp_topic_id', true );
 	$png_url      = get_post_meta( $post_id, 'scp_png_url', true );
+	$web_url      = get_post_meta( $post_id, 'scp_thumb_url', true ) ?: $png_url;
 	$pdf_url      = get_post_meta( $post_id, 'scp_pdf_url', true );
 	$alt_text     = get_post_meta( $post_id, 'scp_alt_text', true ) ?: get_the_title();
 	$intro        = get_post_meta( $post_id, 'scp_intro', true );
@@ -67,7 +68,8 @@ while ( have_posts() ) : the_post();
 			<div style="flex:1;min-width:280px">
 				<div style="background:#F4F8FC;border-radius:20px;padding:28px;display:flex;justify-content:center;min-height:460px">
 					<div id="scp-print-area" style="width:100%;max-width:400px;display:flex;align-items:center">
-						<img src="<?php echo esc_url( $png_url ); ?>" alt="<?php echo esc_attr( $alt_text ); ?>" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
+						<img src="<?php echo esc_url( $web_url ); ?>" alt="<?php echo esc_attr( $alt_text ); ?>" class="scp-screen-img" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
+						<img src="<?php echo esc_url( $png_url ); ?>" alt="<?php echo esc_attr( $alt_text ); ?>" class="scp-print-img" style="display:none">
 					</div>
 				</div>
 

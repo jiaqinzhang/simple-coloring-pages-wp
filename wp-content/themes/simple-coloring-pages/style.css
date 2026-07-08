@@ -160,9 +160,13 @@ img{max-width:100%;display:block}
 h1,h2,h3{font-family:var(--font-display);color:var(--text);margin:0}
 
 /* ---------- Print (single coloring page only) ---------- */
+/* On screen: show the web-optimized image. When printing: swap to the
+   full-resolution Letter/A4-formatted file so the printout is print quality. */
 @media print{
   body *{visibility:hidden}
   #scp-print-area,#scp-print-area *{visibility:visible}
   #scp-print-area{position:absolute;top:0;left:0;width:100%;max-width:100%!important;padding:0;margin:0}
   #scp-print-area img{width:100%;height:auto;box-shadow:none!important;border-radius:0!important}
+  #scp-print-area .scp-screen-img{display:none!important}
+  #scp-print-area .scp-print-img{display:block!important}
 }

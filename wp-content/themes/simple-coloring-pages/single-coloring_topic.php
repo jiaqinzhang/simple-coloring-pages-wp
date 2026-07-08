@@ -56,7 +56,8 @@ while ( have_posts() ) : the_post();
 				<div style="flex:1;min-width:280px">
 					<div style="background:#F4F8FC;border-radius:20px;padding:28px;display:flex;justify-content:center;aspect-ratio:auto;min-height:500px">
 						<div id="scp-print-area" style="width:100%;max-width:400px;display:flex;align-items:center">
-							<img id="scp-main-image" src="<?php echo esc_url( $pages[0]['png_url'] ?? '' ); ?>" alt="<?php echo esc_attr( $pages[0]['alt'] ?? $pages[0]['title'] ?? '' ); ?>" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
+							<img id="scp-main-image" src="<?php echo esc_url( $pages[0]['thumb_url'] ?? $pages[0]['png_url'] ?? '' ); ?>" alt="<?php echo esc_attr( $pages[0]['alt'] ?? $pages[0]['title'] ?? '' ); ?>" class="scp-screen-img" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
+							<img id="scp-print-image" src="<?php echo esc_url( $pages[0]['png_url'] ?? '' ); ?>" alt="<?php echo esc_attr( $pages[0]['alt'] ?? $pages[0]['title'] ?? '' ); ?>" class="scp-print-img" style="display:none">
 						</div>
 					</div>
 				</div>
@@ -101,6 +102,7 @@ while ( have_posts() ) : the_post();
 								data-index="<?php echo esc_attr( $i ); ?>"
 								data-title="<?php echo esc_attr( $p['title'] ?? '' ); ?>"
 								data-png="<?php echo esc_url( $p['png_url'] ?? '' ); ?>"
+								data-web="<?php echo esc_url( $p['thumb_url'] ?? $p['png_url'] ?? '' ); ?>"
 								data-pdf="<?php echo esc_url( $p['pdf_url'] ?? '' ); ?>"
 								data-alt="<?php echo esc_attr( $p['alt'] ?? $p['title'] ?? '' ); ?>"
 								style="background:#fff;border:2px solid var(--border);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;transition:all 200ms;aspect-ratio:11/14"
@@ -180,6 +182,7 @@ while ( have_posts() ) : the_post();
 	document.addEventListener('DOMContentLoaded', function() {
 		const thumbBtns = document.querySelectorAll('.scp-thumb-btn');
 		const mainImg = document.getElementById('scp-main-image');
+		const printImg = document.getElementById('scp-print-image');
 		const pageTitle = document.getElementById('scp-page-title');
 		const downloadPdf = document.getElementById('scp-download-pdf');
 		const downloadPng = document.getElementById('scp-download-png');
@@ -188,11 +191,13 @@ while ( have_posts() ) : the_post();
 			btn.addEventListener('click', function() {
 				const title = this.getAttribute('data-title');
 				const png = this.getAttribute('data-png');
+				const web = this.getAttribute('data-web');
 				const pdf = this.getAttribute('data-pdf');
 				const alt = this.getAttribute('data-alt');
 
-				mainImg.src = png;
+				mainImg.src = web;
 				mainImg.alt = alt;
+				if (printImg) { printImg.src = png; printImg.alt = alt; }
 				pageTitle.textContent = title;
 				downloadPdf.href = pdf;
 				downloadPng.href = png;
