@@ -147,7 +147,7 @@ endif;
 <section class="wrap" style="padding-top:64px;padding-bottom:24px">
 	<div class="section-card" style="border-radius:28px;padding:44px clamp(24px,5vw,56px);box-shadow:0 4px 14px rgba(61,66,102,.05)">
 		<h2 style="font-size:28px;margin-bottom:14px">Free Printable Coloring Pages for Kids</h2>
-		<p style="font-size:16px;line-height:1.75;color:var(--text-soft);margin:0 0 12px;max-width:820px"><?php bloginfo( 'name' ); ?> offers hundreds of free printable coloring pages for toddlers, preschoolers, and elementary school kids. Every page is an original, kid-friendly illustration with bold, easy-to-color outlines &mdash; perfect for crayons, markers, and colored pencils. Simply download the PDF and print at home or in the classroom.</p>
+		<p style="font-size:16px;line-height:1.75;color:var(--text-soft);margin:0 0 12px;max-width:820px"><?php bloginfo( 'name' ); ?> offers thousands of free printable coloring pages for toddlers, preschoolers, and elementary school kids. Every page is an original, kid-friendly illustration with bold, easy-to-color outlines &mdash; perfect for crayons, markers, and colored pencils. Simply download the PDF and print at home or in the classroom.</p>
 		<p style="font-size:16px;line-height:1.75;color:var(--text-soft);margin:0;max-width:820px">New coloring sheets are added every week across animals, holidays, fantasy, vehicles, nature, and educational themes like the alphabet and numbers.</p>
 
 		<h3 style="font-size:21px;margin:36px 0 18px">How to Use Our Coloring Pages</h3>
