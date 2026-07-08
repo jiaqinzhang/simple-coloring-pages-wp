@@ -94,8 +94,67 @@ function scp_seed_demo_content() {
 			),
 		);
 		update_post_meta( $post_id, 'scp_pages', $pages );
+
+		// Seed real single-image coloring_page children for Cat + Unicorn so the
+		// new single-image landing page template can be previewed with real data.
+		if ( in_array( $basename, array( 'cat', 'unicorn' ), true ) ) {
+			scp_seed_demo_single_pages( $post_id, $title, $basename, $img_1_0, $img_0_5 );
+		}
 	}
 
 	update_option( 'scp_demo_seeded', 1 );
 }
 add_action( 'init', 'scp_seed_demo_content', 20 );
+
+/** Seed 2 demo coloring_page children under a topic (mirrors the SEO content-regeneration rules). */
+function scp_seed_demo_single_pages( $topic_id, $topic_title, $basename, $img_1_0, $img_0_5 ) {
+	$noun = $basename === 'cat' ? 'Cat' : 'Unicorn';
+
+	$vocab_banks = array(
+		'Cat'     => array( 'whiskers', 'purr', 'kitten' ),
+		'Unicorn' => array( 'horn', 'mane', 'sparkle' ),
+	);
+	$fun_facts = array(
+		'Cat'     => 'Cats spend around 70% of their lives asleep, which adds up to 13-16 hours a day.',
+		'Unicorn' => 'Unicorns have appeared in myths and stories for over 4,000 years.',
+	);
+
+	$variants = array(
+		array(
+			'tag'   => 'Waving',
+			'pose'  => "a cute {$basename} sitting up tall with a big cheerful grin, head tilted slightly, one paw raised in a wave",
+			'image' => $img_1_0,
+		),
+		array(
+			'tag'   => 'Sleepy',
+			'pose'  => "a cute {$basename} curled up fast asleep, peaceful smile, one eye scrunched shut, paws tucked under its chin",
+			'image' => $img_0_5,
+		),
+	);
+
+	foreach ( $variants as $i => $v ) {
+		$page_title = "{$v['tag']} {$noun} Coloring Page";
+		$slug       = sanitize_title( $page_title );
+
+		$page_id = wp_insert_post( array(
+			'post_type'   => 'coloring_page',
+			'post_title'  => $page_title,
+			'post_name'   => $slug,
+			'post_status' => 'publish',
+			'menu_order'  => $i,
+		) );
+		if ( is_wp_error( $page_id ) ) continue;
+
+		$intro = "This {$noun} coloring page shows {$v['pose']}. It's part of our free printable coloring pages collection, made for parents, teachers, and grandparents who want an easy screen-free activity kids can start in seconds -- just download the PDF and print on Letter or A4 paper. This page fits Ages 3-8. While coloring, children practice fine motor skills, hand-eye coordination, and pencil control, and can pick up three real words: " . implode( ', ', $vocab_banks[ $noun ] ) . ". " . $fun_facts[ $noun ];
+
+		update_post_meta( $page_id, 'scp_topic_id', $topic_id );
+		update_post_meta( $page_id, 'scp_meta_description', "Free printable {$basename} coloring page: {$v['pose']}. Download the PDF and print at home for ages 3-8." );
+		update_post_meta( $page_id, 'scp_intro', $intro );
+		update_post_meta( $page_id, 'scp_vocabulary', $vocab_banks[ $noun ] );
+		update_post_meta( $page_id, 'scp_fun_fact', $fun_facts[ $noun ] );
+		update_post_meta( $page_id, 'scp_alt_text', "Free printable {$basename} coloring page featuring {$v['pose']}." );
+		update_post_meta( $page_id, 'scp_png_url', $v['image'] );
+		update_post_meta( $page_id, 'scp_thumb_url', $v['image'] );
+		update_post_meta( $page_id, 'scp_pdf_url', '' );
+	}
+}

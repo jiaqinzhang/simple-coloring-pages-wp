@@ -60,8 +60,55 @@ function scp_register_post_types() {
 		'show_in_rest'  => true,
 		'rewrite'       => array( 'slug' => 'category' ),
 	) );
+
+	// Single-image landing page (one per printable page inside a coloring_topic).
+	// URL is handled manually (see scp_coloring_page_rewrite_rules) so it can
+	// nest under its parent topic's slug: /coloring-pages/{topic}/{page}/
+	register_post_type( 'coloring_page', array(
+		'labels' => array(
+			'name'          => __( 'Coloring Pages (Single Images)', 'simple-coloring-pages' ),
+			'singular_name' => __( 'Coloring Page', 'simple-coloring-pages' ),
+			'add_new_item'  => __( 'Add New Coloring Page', 'simple-coloring-pages' ),
+		),
+		'public'        => true,
+		'has_archive'   => false,
+		'show_in_rest'  => true,
+		'menu_icon'     => 'dashicons-format-image',
+		'supports'      => array( 'title', 'thumbnail', 'custom-fields' ),
+		'rewrite'       => false,
+	) );
 }
 add_action( 'init', 'scp_register_post_types' );
+
+/* ------------------------------------------------------------------ */
+/* Routing for coloring_page: /coloring-pages/{topic-slug}/{page-slug}/ */
+/* ------------------------------------------------------------------ */
+function scp_coloring_page_rewrite_rules() {
+	add_rewrite_rule(
+		'^coloring-pages/([^/]+)/([^/]+)/?$',
+		'index.php?coloring_page=$matches[2]&scp_topic_slug=$matches[1]',
+		'top'
+	);
+}
+add_action( 'init', 'scp_coloring_page_rewrite_rules' );
+
+function scp_add_query_vars( $vars ) {
+	$vars[] = 'scp_topic_slug';
+	return $vars;
+}
+add_filter( 'query_vars', 'scp_add_query_vars' );
+
+function scp_coloring_page_permalink( $url, $post ) {
+	if ( $post->post_type === 'coloring_page' ) {
+		$topic_id   = (int) get_post_meta( $post->ID, 'scp_topic_id', true );
+		$topic_slug = $topic_id ? get_post_field( 'post_name', $topic_id ) : '';
+		if ( $topic_slug ) {
+			$url = home_url( '/coloring-pages/' . $topic_slug . '/' . $post->post_name . '/' );
+		}
+	}
+	return $url;
+}
+add_filter( 'post_type_link', 'scp_coloring_page_permalink', 10, 2 );
 
 /**
  * Meta fields on a coloring_topic post (set by the content-import pipeline, not hand-edited):
@@ -85,6 +132,46 @@ function scp_register_meta_fields() {
 	}
 }
 add_action( 'init', 'scp_register_meta_fields' );
+
+/**
+ * Meta fields on a coloring_page post (set by the content-import pipeline):
+ *
+ * scp_topic_id        (int)    Parent coloring_topic post ID.
+ * scp_meta_description(string) <meta name="description">, unique per image.
+ * scp_intro           (string) 200-500 word body text, unique per image.
+ * scp_vocabulary      (array)  3 real topic-relevant vocabulary words.
+ * scp_fun_fact        (string) One real fact about the topic.
+ * scp_alt_text        (string) Full, non-truncated image alt text.
+ * scp_png_url         (string) High-res PNG (used as the large on-page image).
+ * scp_pdf_url         (string) Printable PDF for this single page.
+ * scp_thumb_url       (string) Small thumbnail for grids/strips.
+ *
+ * Ordering between sibling pages within a topic uses the native menu_order field.
+ */
+function scp_register_coloring_page_meta_fields() {
+	$string_fields = array( 'scp_meta_description', 'scp_intro', 'scp_fun_fact', 'scp_alt_text', 'scp_png_url', 'scp_pdf_url', 'scp_thumb_url' );
+	foreach ( $string_fields as $field ) {
+		register_post_meta( 'coloring_page', $field, array(
+			'show_in_rest'  => true,
+			'single'        => true,
+			'type'          => 'string',
+			'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+		) );
+	}
+	register_post_meta( 'coloring_page', 'scp_topic_id', array(
+		'show_in_rest'  => true,
+		'single'        => true,
+		'type'          => 'integer',
+		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+	) );
+	register_post_meta( 'coloring_page', 'scp_vocabulary', array(
+		'show_in_rest'  => true,
+		'single'        => true,
+		'type'          => 'array',
+		'auth_callback' => function() { return current_user_can( 'edit_posts' ); },
+	) );
+}
+add_action( 'init', 'scp_register_coloring_page_meta_fields' );
 
 /* ------------------------------------------------------------------ */
 /* Helpers used across templates                                       */
@@ -125,6 +212,34 @@ function scp_render_topic_card( $post_id, $index = 0, $dense = false ) {
 				<span class="topic-card-cta">View Pages</span>
 			<?php endif; ?>
 		</div>
+	</a>
+	<?php
+}
+
+/** All coloring_page children of a topic, ordered for prev/next + thumbnail strip. */
+function scp_get_page_siblings( $topic_id ) {
+	return get_posts( array(
+		'post_type'      => 'coloring_page',
+		'posts_per_page' => -1,
+		'meta_key'       => 'scp_topic_id',
+		'meta_value'     => $topic_id,
+		'orderby'        => 'menu_order',
+		'order'          => 'ASC',
+	) );
+}
+
+/** Render one thumbnail in the "All Pages" strip — links to the image's own URL. */
+function scp_render_page_thumb( $post_id, $is_active = false ) {
+	$thumb = get_post_meta( $post_id, 'scp_thumb_url', true ) ?: get_post_meta( $post_id, 'scp_png_url', true );
+	$title = get_the_title( $post_id );
+	$border = $is_active ? '3px solid var(--blue)' : '2px solid var(--border)';
+	?>
+	<a href="<?php echo esc_url( get_permalink( $post_id ) ); ?>"
+	   class="scp-thumb-link"
+	   style="display:block;background:#fff;border:<?php echo esc_attr( $border ); ?>;border-radius:12px;overflow:hidden;aspect-ratio:11/14">
+		<?php if ( $thumb ) : ?>
+			<img src="<?php echo esc_url( $thumb ); ?>" alt="<?php echo esc_attr( $title ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#F4F8FC;padding:4px">
+		<?php endif; ?>
 	</a>
 	<?php
 }

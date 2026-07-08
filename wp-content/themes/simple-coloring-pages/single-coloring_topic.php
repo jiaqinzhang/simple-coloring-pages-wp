@@ -17,6 +17,11 @@ while ( have_posts() ) : the_post();
 
 	$terms = get_the_terms( $post_id, 'topic_category' );
 	$primary_cat = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
+
+	// Once single-image pages exist for this topic, link straight to them
+	// (real URLs, crawlable) instead of the old in-page JS image swap.
+	$child_pages = scp_get_page_siblings( $post_id );
+	$has_child_pages = count( $child_pages ) > 0;
 	?>
 
 	<main class="wrap" style="max-width:1000px;padding-top:24px">
@@ -51,7 +56,7 @@ while ( have_posts() ) : the_post();
 				<!-- 大图区域 -->
 				<div style="flex:1;min-width:280px">
 					<div style="background:#F4F8FC;border-radius:20px;padding:28px;display:flex;justify-content:center;aspect-ratio:auto;min-height:500px">
-						<div style="width:100%;max-width:400px;display:flex;align-items:center">
+						<div id="scp-print-area" style="width:100%;max-width:400px;display:flex;align-items:center">
 							<img id="scp-main-image" src="<?php echo esc_url( $pages[0]['png_url'] ?? '' ); ?>" alt="<?php echo esc_attr( $pages[0]['alt'] ?? $pages[0]['title'] ?? '' ); ?>" style="width:100%;height:auto;border-radius:8px;box-shadow:0 4px 20px rgba(61,66,102,.16)">
 						</div>
 					</div>
@@ -61,16 +66,20 @@ while ( have_posts() ) : the_post();
 				<div style="flex:0 1 340px;display:flex;flex-direction:column;gap:16px">
 					<div>
 						<div style="font-size:12px;font-weight:800;letter-spacing:.8px;color:var(--text-mute);text-transform:uppercase;margin-bottom:8px"><?php the_title(); ?></div>
-						<h2 id="scp-page-title" style="font-size:24px;line-height:1.3;margin:0 0 12px"><?php echo esc_html( $pages[0]['title'] ?? '' ); ?></h2>
+						<h2 id="scp-page-title" style="font-size:24px;line-height:1.3;margin:0 0 12px"><?php echo esc_html( $has_child_pages ? get_the_title( $child_pages[0]->ID ) : ( $pages[0]['title'] ?? '' ) ); ?></h2>
 						<p style="font-size:14.5px;line-height:1.65;color:var(--text-soft);margin:0">High-resolution printable, sized for US Letter &amp; A4. Free for personal and classroom use.</p>
 					</div>
 
 					<!-- 主要下载按钮 -->
-					<div style="display:flex;flex-direction:column;gap:10px">
-						<a id="scp-download-pdf" href="<?php echo esc_url( $pages[0]['pdf_url'] ?? '#' ); ?>" class="btn btn-primary" style="text-align:center">Download PDF</a>
-						<a id="scp-download-png" href="<?php echo esc_url( $pages[0]['png_url'] ?? '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download PNG</a>
-						<button onclick="window.print()" class="btn btn-outline">Print This Page</button>
-					</div>
+					<?php if ( $has_child_pages ) : ?>
+						<a href="<?php echo esc_url( get_permalink( $child_pages[0]->ID ) ); ?>" class="btn btn-primary" style="text-align:center">View This Page</a>
+					<?php else : ?>
+						<div style="display:flex;flex-direction:column;gap:10px">
+							<a id="scp-download-pdf" href="<?php echo esc_url( $pages[0]['pdf_url'] ?: '#' ); ?>" class="btn btn-primary" style="text-align:center">Download PDF</a>
+							<a id="scp-download-png" href="<?php echo esc_url( $pages[0]['png_url'] ?: '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download PNG</a>
+							<button onclick="window.print()" class="btn btn-outline">Print This Page</button>
+						</div>
+					<?php endif; ?>
 
 					<!-- Google AdSense 广告位 (300x250 或 336x280) -->
 					<?php if ( $show_ads ) : ?>
@@ -84,24 +93,34 @@ while ( have_posts() ) : the_post();
 			<!-- 缩略图滚动列表 -->
 			<div style="margin-bottom:32px">
 				<h3 style="font-size:16px;font-weight:700;margin:0 0 12px;color:var(--text-soft)">All Pages</h3>
-				<div id="scp-thumbnails" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
-					<?php foreach ( $pages as $i => $p ) : ?>
-						<button
-							class="scp-thumb-btn"
-							data-index="<?php echo esc_attr( $i ); ?>"
-							data-title="<?php echo esc_attr( $p['title'] ?? '' ); ?>"
-							data-png="<?php echo esc_url( $p['png_url'] ?? '' ); ?>"
-							data-pdf="<?php echo esc_url( $p['pdf_url'] ?? '' ); ?>"
-							data-alt="<?php echo esc_attr( $p['alt'] ?? $p['title'] ?? '' ); ?>"
-							style="background:#fff;border:2px solid var(--border);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;transition:all 200ms;aspect-ratio:11/14"
-							<?php echo $i === 0 ? 'style="background:#fff;border:3px solid var(--blue);border-radius:12px;overflow:hidden;padding:0;cursor:pointer"' : ''; ?>
-						>
-							<?php if ( ! empty( $p['thumb_url'] ) ) : ?>
-								<img src="<?php echo esc_url( $p['thumb_url'] ); ?>" alt="<?php echo esc_attr( $p['alt'] ?? '' ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#F4F8FC;padding:4px">
-							<?php endif; ?>
-						</button>
-					<?php endforeach; ?>
-				</div>
+				<?php if ( $has_child_pages ) : ?>
+					<!-- Each thumbnail is a real link to its own crawlable landing page. -->
+					<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
+						<?php foreach ( $child_pages as $i => $cp ) : ?>
+							<?php scp_render_page_thumb( $cp->ID, $i === 0 ); ?>
+						<?php endforeach; ?>
+					</div>
+				<?php else : ?>
+					<!-- Legacy in-page swap, used only for topics not yet migrated to single-image pages. -->
+					<div id="scp-thumbnails" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:12px">
+						<?php foreach ( $pages as $i => $p ) : ?>
+							<button
+								class="scp-thumb-btn"
+								data-index="<?php echo esc_attr( $i ); ?>"
+								data-title="<?php echo esc_attr( $p['title'] ?? '' ); ?>"
+								data-png="<?php echo esc_url( $p['png_url'] ?? '' ); ?>"
+								data-pdf="<?php echo esc_url( $p['pdf_url'] ?? '' ); ?>"
+								data-alt="<?php echo esc_attr( $p['alt'] ?? $p['title'] ?? '' ); ?>"
+								style="background:#fff;border:2px solid var(--border);border-radius:12px;overflow:hidden;padding:0;cursor:pointer;transition:all 200ms;aspect-ratio:11/14"
+								<?php echo $i === 0 ? 'style="background:#fff;border:3px solid var(--blue);border-radius:12px;overflow:hidden;padding:0;cursor:pointer"' : ''; ?>
+							>
+								<?php if ( ! empty( $p['thumb_url'] ) ) : ?>
+									<img src="<?php echo esc_url( $p['thumb_url'] ); ?>" alt="<?php echo esc_attr( $p['alt'] ?? '' ); ?>" loading="lazy" style="width:100%;height:100%;object-fit:contain;background:#F4F8FC;padding:4px">
+								<?php endif; ?>
+							</button>
+						<?php endforeach; ?>
+					</div>
+				<?php endif; ?>
 			</div>
 
 			<!-- 中间广告位 (728x90 或响应式) -->
