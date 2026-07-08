@@ -4,8 +4,6 @@
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
-
-$show_ads = true; // TODO: wire to a theme option once AdSense/Mediavine is approved.
 ?>
 
 <!-- ============ HERO ============ -->
@@ -28,12 +26,6 @@ $show_ads = true; // TODO: wire to a theme option once AdSense/Mediavine is appr
 	</div>
 </section>
 
-<?php if ( $show_ads ) : ?>
-<div class="wrap" style="margin-top:8px">
-	<div class="ad-slot" style="height:100px">AD PLACEHOLDER &middot; 970 &times; 90 LEADERBOARD</div>
-</div>
-<?php endif; ?>
-
 <!-- ============ POPULAR ============ -->
 <section id="popular" class="wrap" style="padding-top:56px;padding-bottom:8px">
 	<div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px">
@@ -52,11 +44,6 @@ $show_ads = true; // TODO: wire to a theme option once AdSense/Mediavine is appr
 	</div>
 </section>
 
-<?php if ( $show_ads ) : ?>
-<div class="wrap" style="margin-top:36px">
-	<div class="ad-slot" style="height:100px">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
-</div>
-<?php endif; ?>
 
 <!-- ============ CATEGORIES ============ -->
 <section class="wrap" style="padding-top:56px;padding-bottom:8px">

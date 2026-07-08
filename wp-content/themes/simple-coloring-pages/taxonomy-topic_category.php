@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
 $term      = get_queried_object();
-$show_ads  = true;
 $total     = $term->count;
 $per_page  = 36;
 $paged     = max( 1, get_query_var( 'paged' ) );
@@ -40,10 +39,6 @@ $topics = new WP_Query( array(
 
 <div class="wrap has-sidebar" style="padding-top:8px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:28px;align-items:start">
 	<div>
-		<?php if ( $show_ads ) : ?>
-			<div class="ad-slot" style="height:96px;margin-bottom:28px">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
-		<?php endif; ?>
-
 		<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px">
 			<h2 style="font-size:22px">All <?php echo esc_html( $term->name ); ?> Topics</h2>
 			<span style="font-size:13.5px;font-weight:800;color:var(--text-mute)">Showing <?php echo esc_html( $topics->post_count ); ?> of <?php echo esc_html( $total ); ?> topics</span>
@@ -99,9 +94,6 @@ $topics = new WP_Query( array(
 	</div>
 
 	<aside class="sidebar" style="display:flex;flex-direction:column;gap:20px;position:sticky;top:86px">
-		<?php if ( $show_ads ) : ?>
-			<div class="ad-slot" style="height:600px">AD PLACEHOLDER<br>300 &times; 600</div>
-		<?php endif; ?>
 		<div style="background:var(--amber-bg2);border-radius:20px;padding:22px">
 			<div style="font-family:var(--font-display);font-weight:700;font-size:17px;margin-bottom:8px">Most Printed This Week</div>
 			<div style="display:flex;flex-direction:column;gap:9px">

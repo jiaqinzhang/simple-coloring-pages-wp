@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
 $query_str = get_search_query();
-$show_ads  = true;
 $has_results = have_posts();
 ?>
 
@@ -61,10 +60,6 @@ $has_results = have_posts();
 			}
 			?>
 		</div>
-	<?php endif; ?>
-
-	<?php if ( $show_ads ) : ?>
-		<div class="ad-slot" style="height:96px;margin:32px 0 0">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
 	<?php endif; ?>
 </main>
 

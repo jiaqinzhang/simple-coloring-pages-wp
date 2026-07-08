@@ -13,7 +13,6 @@ while ( have_posts() ) : the_post();
 	$age_range    = get_post_meta( $post_id, 'scp_age_range', true ) ?: '2-10';
 	$pdf_all_url  = get_post_meta( $post_id, 'scp_pdf_all_url', true );
 	$pdf_all_size = get_post_meta( $post_id, 'scp_pdf_all_size', true );
-	$show_ads     = true;
 
 	$terms = get_the_terms( $post_id, 'topic_category' );
 	$primary_cat = ( $terms && ! is_wp_error( $terms ) ) ? $terms[0] : null;
@@ -80,13 +79,6 @@ while ( have_posts() ) : the_post();
 							<button onclick="window.print()" class="btn btn-outline">Print This Page</button>
 						</div>
 					<?php endif; ?>
-
-					<!-- Google AdSense 广告位 (300x250 或 336x280) -->
-					<?php if ( $show_ads ) : ?>
-						<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-							<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-						</div>
-					<?php endif; ?>
 				</div>
 			</div>
 
@@ -123,22 +115,8 @@ while ( have_posts() ) : the_post();
 				<?php endif; ?>
 			</div>
 
-			<!-- 中间广告位 (728x90 或响应式) -->
-			<?php if ( $show_ads ) : ?>
-				<div style="margin:32px 0;text-align:center">
-					<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="0987654321" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-				</div>
-			<?php endif; ?>
-
 		<?php else : ?>
 			<div style="padding:40px;background:#F9F9F9;border-radius:12px;text-align:center;color:var(--text-soft)">Pages for this topic haven't been imported yet.</div>
-		<?php endif; ?>
-
-		<!-- Google AdSense 底部广告位 (728x90) -->
-		<?php if ( $show_ads ) : ?>
-			<div style="margin:40px 0;text-align:center">
-				<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="5555555555" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
-			</div>
 		<?php endif; ?>
 
 		<section style="margin-top:48px">

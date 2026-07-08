@@ -6,7 +6,6 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 get_header();
 
-$show_ads = true;
 $paged    = max( 1, get_query_var( 'paged' ) );
 $topics   = new WP_Query( array( 'post_type' => 'coloring_topic', 'posts_per_page' => 36, 'paged' => $paged ) );
 $total    = wp_count_posts( 'coloring_topic' )->publish;
@@ -29,10 +28,6 @@ $total    = wp_count_posts( 'coloring_topic' )->publish;
 </section>
 
 <div class="wrap" style="padding-top:8px">
-	<?php if ( $show_ads ) : ?>
-		<div class="ad-slot" style="height:96px;margin-bottom:28px">AD PLACEHOLDER &middot; 728 &times; 90 BANNER</div>
-	<?php endif; ?>
-
 	<div class="grid-cards-dense">
 		<?php
 		$i = 0;

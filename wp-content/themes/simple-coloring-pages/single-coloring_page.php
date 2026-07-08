@@ -18,7 +18,6 @@ while ( have_posts() ) : the_post();
 	$vocabulary   = is_array( $vocabulary ) ? $vocabulary : array();
 	$fun_fact     = get_post_meta( $post_id, 'scp_fun_fact', true );
 	$meta_desc    = get_post_meta( $post_id, 'scp_meta_description', true );
-	$show_ads     = true;
 
 	$topic_title  = $topic_id ? get_the_title( $topic_id ) : '';
 	$topic_link   = $topic_id ? get_permalink( $topic_id ) : home_url( '/' );
@@ -99,12 +98,6 @@ while ( have_posts() ) : the_post();
 					<a href="<?php echo esc_url( $png_url ?: '#' ); ?>" class="btn btn-outline" style="text-align:center;cursor:pointer" download>Download <?php echo esc_html( $page_title ); ?> PNG</a>
 					<button onclick="window.print()" class="btn btn-outline">Print <?php echo esc_html( $page_title ); ?></button>
 				</div>
-
-				<?php if ( $show_ads ) : ?>
-					<div style="margin-top:20px;padding-top:20px;border-top:1px solid var(--border)">
-						<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="1234567890" data-ad-format="auto" data-full-width-responsive="true"></ins>
-					</div>
-				<?php endif; ?>
 			</div>
 		</div>
 
@@ -139,12 +132,6 @@ while ( have_posts() ) : the_post();
 						<p style="font-size:14.5px;line-height:1.65;color:var(--text-soft);margin:0"><?php echo esc_html( $fun_fact ); ?></p>
 					</div>
 				<?php endif; ?>
-			</div>
-		<?php endif; ?>
-
-		<?php if ( $show_ads ) : ?>
-			<div style="margin-bottom:32px;text-align:center">
-				<ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-xxxxxxxxxxxxxxxx" data-ad-slot="0987654321" data-ad-format="horizontal" data-full-width-responsive="true"></ins>
 			</div>
 		<?php endif; ?>
 
