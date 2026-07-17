@@ -8,6 +8,19 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 define( 'SCP_THEME_VERSION', '1.0.1' );
 
 /* ------------------------------------------------------------------ */
+/* ads.txt -- required by Google AdSense to list authorized sellers.  */
+/* Served dynamically so it doesn't depend on a physical file existing */
+/* on the web root (which gets wiped/recreated on theme deploys).      */
+/* ------------------------------------------------------------------ */
+function scp_serve_ads_txt() {
+	if ( trim( parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH ), '/' ) !== 'ads.txt' ) return;
+	header( 'Content-Type: text/plain; charset=utf-8' );
+	echo "google.com, pub-1617875813767295, DIRECT, f08c47fec0942fa0\n";
+	exit;
+}
+add_action( 'init', 'scp_serve_ads_txt' );
+
+/* ------------------------------------------------------------------ */
 /* Theme setup                                                         */
 /* ------------------------------------------------------------------ */
 function scp_theme_setup() {
